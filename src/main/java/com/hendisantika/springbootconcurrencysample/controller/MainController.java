@@ -24,6 +24,24 @@ public class MainController {
     @Autowired
     KotlinBean kotlinBean;
 
+    @RequestMapping(value = "/main")
+    public String getSuccess() {
+
+        long start = 0, end = 0;
+
+        System.out.println("Rest Call started .........." + (start = System.currentTimeMillis()));
+
+        for (int i = 0; i < 10000; i++) {
+            System.out.println(restTemplate.getForObject("http://localhost:8080/callKotlin", String.class));
+        }
+
+        System.out.println("Rest Call finished .........." + (end = System.currentTimeMillis()));
+
+        System.out.println("Total time spent in seconds " + (end - start) / 1000);
+
+        return "success";
+    }
+
     @RequestMapping(value = "/callKotlin")
     public String callKotlin() {
 
