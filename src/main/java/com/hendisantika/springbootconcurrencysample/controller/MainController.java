@@ -2,6 +2,7 @@ package com.hendisantika.springbootconcurrencysample.controller;
 
 import com.hendisantika.springbootconcurrencysample.kotlin.KotlinBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,4 +23,11 @@ public class MainController {
 
     @Autowired
     KotlinBean kotlinBean;
+
+    @RequestMapping(value = "/callKotlin")
+    public String callKotlin() {
+
+        return kotlinBean.helloKotlin("Hello Kotlin");
+    }
+
 }
