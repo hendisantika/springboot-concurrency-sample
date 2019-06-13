@@ -83,4 +83,32 @@ public class MainController {
     }
 
 
+    @RequestMapping(value = "/callKotlinCallable")
+    public String callKotlinCallable() throws Exception {
+
+        long start = 0, end = 0;
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        List<Future<String>> futures = new ArrayList<>();
+        System.out.println("Kotlin Callable Rest Call started .........." + (start = System.currentTimeMillis()));
+        for (int i = 0; i < 10000; i++) {
+            Future<String> future = executorService.submit(
+                    new KotlinBean().getCallable(() -> restTemplate.getForObject("http://localhost:8080/callKotlin", String.class)));
+            futures.add(future);
+
+        }
+
+        for (Future<String> future : futures) {
+            System.out.println(future.get());
+        }
+
+        executorService.shutdown();
+        System.out.println("Kotlin Callable Rest Call finished .........." + (end = System.currentTimeMillis()));
+
+        System.out.println("Kotlin Callable Total time spent in seconds " + (end - start) / 1000);
+
+
+        return "success callable Kotlin";
+    }
+
+
 }
