@@ -6,6 +6,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 /**
  * Created by IntelliJ IDEA.
  * Project : springboot-concurrency-sample
@@ -47,5 +53,34 @@ public class MainController {
 
         return kotlinBean.helloKotlin("Hello Kotlin");
     }
+
+    @RequestMapping(value = "/callJavaCallable")
+    public String callJavaCallable() throws Exception {
+        long start = 0, end = 0;
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        List<Future<String>> futures = new ArrayList<>();
+        System.out.println("Java Callable Rest Call started .........." + (start = System.currentTimeMillis()));
+        for (int i = 0; i < 10000; i++) {
+
+            Future<String> future = executorService.submit(() -> restTemplate.getForObject("http://localhost:8080/callKotlin", String.class));
+            futures.add(future);
+            //final CompletableFuture<String> uCompletableFuture = CompletableFuture
+            //      .supplyAsync(() -> restTemplate.getForObject("https://api.coinmarketcap.com/v2/listings", String.class));
+
+            //   System.out.println(uCompletableFuture.get());
+        }
+
+        for (Future<String> future : futures) {
+            System.out.println(future.get());
+        }
+
+        executorService.shutdown();
+        System.out.println("Java Callable Rest Call finished .........." + (end = System.currentTimeMillis()));
+
+        System.out.println("Java Callable Total time spent in seconds " + (end - start) / 1000);
+
+        return "success callable Java";
+    }
+
 
 }
